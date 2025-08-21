@@ -1,0 +1,30 @@
+# Ignore WordPress core, plugins, and themes
+/wp-content/
+/wp-admin/
+/wp-includes/
+/readme.html
+/license.txt
+/index.php
+/wp-config.php
+
+# Ignore common development files
+/.sass-cache/
+/.idea/
+/.DS_Store
+/Thumbs.db
+/node_modules/
+/vendor/
+/composer.lock
+/package-lock.json
+
+# Ignore backup and debug files
+*.sublime-project
+*.sublime-workspace
+*.log
+*.bak
+*.swp
+/phpcs.xml
+/phpcs.xml.dist
+/phpunit.xml
+/phpunit.xml.dist
+/wp-content/debug.log
