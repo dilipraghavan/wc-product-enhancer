@@ -3,8 +3,8 @@ namespace WCProductEnhancer\Admin;
 
 class AdminManager
 {
-    public function __construct()
-    {
+    public function __construct(){
+
         add_filter('woocommerce_product_data_tabs', [$this, 'add_bogo_product_data_tab']);
         add_action('woocommerce_product_data_panels', [$this, 'add_bogo_product_data_fields']);
         add_action('woocommerce_process_product_meta', [$this, 'save_bogo_product_data']);
@@ -12,7 +12,7 @@ class AdminManager
 
     public function add_bogo_product_data_tab($tabs){
         $tabs['bogo_tab'] = [
-            'label' => 'BOGO Rule',
+            'label' => __('BOGO Rule', 'wc-product-enhancer'),
             'target' => 'bogo-product-data',
             'class' => ['show_if_simple', 'show_if_variable', 'bogo-product-data-style'],
         ];
@@ -30,7 +30,7 @@ class AdminManager
         woocommerce_wp_checkbox(
             [
                 'id' => '_bogo_rule_enabled',
-                'label' => 'Enabled Bogo Rule',
+                'label' => __('Enabled Bogo Rule', 'wc-product-enhancer'),
                 'value' => $bogo_rule_enabled === 'yes' ? 'yes' : 'no',
                 'cbvalue' => 'yes',
                 'wrapper_class' => 'bogo-checkbox'
@@ -41,10 +41,10 @@ class AdminManager
         woocommerce_wp_text_input(
             [
                 'id' => '_bogo_buy_quantity',
-                'label' => 'Buy Quantity',
+                'label' => __('Buy Quantity', 'wc-product-enhancer'),
                 'type' => 'number',
                 'value' => $bogo_buy_quantity ?: 0,
-                'description' => 'Quantity customer must buy for BOGO.',
+                'description' => __('Quantity customer must buy for BOGO.', 'wc-product-enhancer'),
                 'desc_tip' => true,
                 'custom_attributes' => [
                     'min' => 0,
@@ -57,10 +57,10 @@ class AdminManager
         woocommerce_wp_text_input(
             [
                 'id' => '_bogo_get_quantity',
-                'label' => 'Get Quantity',
+                'label' => __('Get Quantity', 'wc-product-enhancer'),
                 'type' => 'number',
                 'value' => $bogo_get_quantity ?: 0,
-                'description' => 'Products customer will get for discount.',
+                'description' => __('Products customer will get for discount.', 'wc-product-enhancer'),
                 'desc_tip' => true,
                 'custom_attributes' => [
                     'min' => 0,
@@ -73,10 +73,10 @@ class AdminManager
         woocommerce_wp_text_input(
             [
                 'id' => '_bogo_discount',
-                'label' => 'Discount',
+                'label' => __('Discount', 'wc-product-enhancer'),
                 'type' => 'number',
                 'value' => $bogo_discount ?: 0,
-                'description' => 'Discount in percentage.',
+                'description' => __('Discount in percentage.', 'wc-product-enhancer'),
                 'desc_tip' => true,
                 'custom_attributes' => [
                     'min' => 0,
@@ -89,11 +89,11 @@ class AdminManager
         woocommerce_wp_select(
             [
                 'id' => '_bogo_discount_type',
-                'label' => 'Discount Type',
+                'label' => __('Discount Type', 'wc-product-enhancer'),
                 'options' => [
-                    'percentage' => 'Percentage Discount',
-                    'fixed' => 'Fixed Price',
-                    'free' => 'Free Product',
+                    'percentage' => __('Percentage Discount', 'wc-product-enhancer'),
+                    'fixed' => __('Fixed Price', 'wc-product-enhancer'),
+                    'free' => __('Free Product', 'wc-product-enhancer'),
                 ],
                 'value' => $bogo_discount_type,
             ]
@@ -101,30 +101,33 @@ class AdminManager
 
         $bogo_get_product_id = (int) ($product ? $product->get_meta('_bogo_get_product_id', true) : get_post_meta($post_id, '_bogo_get_product_id', true));
 
-        echo "<p class='form-field _bogo_get_product_id_field'>";
-        echo "<label for='_bogo_get_product_id'>Get Product </label>";
-        echo "<select 
+        ?>
+        <p class='form-field _bogo_get_product_id_field'>
+        <label for='_bogo_get_product_id'> <?php echo esc_html__('Get Product', 'wc-product-enhancer'); ?> </label>
+        <select 
                 class='wc-product-search'
                 style='width:50%'
                 id='_bogo_get_product_id' 
                 name='_bogo_get_product_id' 
-                data-placeholder='Search for a product...'
+                data-placeholder= <?php esc_attr_e('Search for a product...', 'wc-product-enhancer'); ?>
                 data-action='woocommerce_json_search_products_and_variations' 
                 data-allow_clear='true'
-                data-exclude='{$post_id}'
-            >";
-
+                data-exclude="{$post_id}"
+        >
+        <?php
         if ( $bogo_get_product_id ) {
             $p = wc_get_product( $bogo_get_product_id );
             if ( $p ) {
                 echo '<option value="' . esc_attr( $bogo_get_product_id ) . '" selected="selected">' . wp_kses_post( $p->get_formatted_name() ) . '</option>';
             }
         }
+        ?>
+        </select>
+        </p>
 
-        echo '</select>';
-        echo '</p>';
-
-        echo "</div></div>";
+        </div></div> 
+        
+    <?php
 
     }
  

@@ -11,7 +11,7 @@ class FrontendManager
         $bogo = $this->check_product_has_bogo();
         if($bogo['valid'] === true){
             $tabs['wpe_bogo'] = [
-                'title' => 'BOGO Offer',
+                'title' => __('BOGO Offer', 'wc-product-enhancer'),
                 'priority' => 20,
                 'callback' => [$this, 'bogo_product_tab_ui_html'],
             ];
@@ -109,31 +109,48 @@ class FrontendManager
 
         if($bogo['valid'] && $get_product){
 
-            $product_name = wp_kses_post($get_product->get_formatted_name());
+            $product_name = wp_kses_post($get_product->get_name());
             $product_url = esc_url(get_permalink($bogo['get_product_id'])); 
             $product_link = "<a href='{$product_url}'>{$product_name}</a>";
             
             switch ($bogo['discount_type']) {
                 case 'percentage':
-                    $message = "<p>Offer for {$product_link}. Buy " . esc_html($bogo['buy_qty']) . ", Get " . esc_html($bogo['get_qty']) . " at " . esc_html($bogo['discount'])  . "% off.</p>";
+                    $message = sprintf(
+                        __('Offer for %1$s. Buy %2$s, Get %3$s at %4$s%% off.', 'wc-product-enhancer'),
+                        $product_link,
+                        esc_html($bogo['buy_qty']),
+                        esc_html($bogo['get_qty']),
+                        esc_html($bogo['discount'])
+                    );
                     break;
                 
                 case 'fixed':
-                    $price_html = wc_price($bogo['discount']);
-                    $message = "<p>Offer for {$product_link}. Buy " . esc_html($bogo['buy_qty']) . ", Get " . esc_html($bogo['get_qty']) . " at {$price_html} each.</p>";
-                    break;
+                    $price_html = wc_price($bogo['discount']); 
+                    $message = sprintf(
+                        __('Offer for %1$s. Buy %2$s, Get %3$s at %4$s each.', 'wc-product-enhancer'),
+                        $product_link,
+                        esc_html($bogo['buy_qty']),
+                        esc_html($bogo['get_qty']),
+                        $price_html
+                    );
+                break;
 
                 case 'free':
-                    $message = "<p>Offer for {$product_link}. Buy " . esc_html($bogo['buy_qty']) . ", Get " . esc_html($bogo['get_qty']) .  " free.</p>";
+                    $message = sprintf(
+                        __('Offer for %1$s. Buy %2$s, Get %3$s free.', 'wc-product-enhancer'),
+                        $product_link,
+                        esc_html($bogo['buy_qty']),
+                        esc_html($bogo['get_qty'])
+                    );
                     break;
                 default:
-                    $message = "<p>No offer.</p>";
+                    $message = esc_html__('No offer','wc-product-enhancer');
                     break;
             }
         }else{
-            $message = "<p>No offer.</p>";
+            $message = esc_html__('No offer','wc-product-enhancer');
         }
 
-        echo $message;
+        echo wp_kses_post("<p>{$message}</p>");
     }
 }
