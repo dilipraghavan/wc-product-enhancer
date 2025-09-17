@@ -4,7 +4,7 @@
     /**
      * Plugin Name: WC Product Enhancer
      * Description: Plugin to enahnce product display and provide custom pricing rules based on certain conditions.
-     * Plugin URI: https://github.com/dilipraghavan/
+     * Plugin URI: https://github.com/dilipraghavan/wc-product-enhancer
      * Author: Dilip Raghavan
      * Author URI: https://www.wpshiftstudio.com
      * Text Domain: wc-product-enhancer
