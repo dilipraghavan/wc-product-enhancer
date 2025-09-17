@@ -5,6 +5,8 @@ class CartManager
 {
     public function __construct(){
         add_action('woocommerce_before_calculate_totals', [$this, 'bogo_before_calculate_totals'], 15); 
+        add_filter('woocommerce_cart_item_name', [$this, 'display_bogo_discount_label_on_cart'], 10, 3);
+        add_action('woocommerce_checkout_create_order_line_item', [$this, 'display_bogo_discount_label_on_checkout'], 10, 4);
     }
 
     public function bogo_before_calculate_totals($cart){
@@ -15,23 +17,30 @@ class CartManager
         $bogo_carrier = [];
         $bogo_target = [];
 
-        foreach ($cart->get_cart() as $cart_item_key => &$cart_item) {
+        $cart_contents = &$cart->cart_contents;
+
+        //First loop: Reset all items before applying rules
+        foreach ($cart_contents as $cart_item_key => &$cart_item) {
+            // Unset previous discount flags
+            unset($cart_item['wpe_discount_applied']); 
+            unset($cart_item['wpe_discount_units']);
+
+            // Reset the price to its original value to avoid stacking discounts
+            if (isset($cart_item['wpe_original_price'])) {
+                $cart_item['data']->set_price((float)$cart_item['wpe_original_price']);
+            } else {
+                // Store the original price if not already set
+                $cart_item['wpe_original_price'] = (float)$cart_item['data']->get_price('edit');
+            }
+        }
+
+        // Second loop: Collect bogo rules 
+        foreach ($cart_contents as $cart_item_key => &$cart_item) {
             
             $product_obj = $cart_item['data'];
 
-            unset($cart->cart_contents[$cart_item_key]['wpe_discount_applied']); 
-            unset($cart->cart_contents[$cart_item_key]['wpe_discount_units']);
-
             // If product is not a WC Product continue.
             if( !is_a($product_obj, 'WC_Product')) continue;
-
-            // Get original price
-            if( !isset($cart->cart_contents[$cart_item_key]['wpe_original_price'])){
-                $cart->cart_contents[$cart_item_key]['wpe_original_price'] = (float)$product_obj->get_price('edit');
-            }
-
-                // Set the actual price at the begining of each iteration
-            $product_obj->set_price((float)$cart->cart_contents[$cart_item_key]['wpe_original_price']);
 
             // Get parent ID , if product is a variation
             $pid_for_rules = $product_obj->get_id();
@@ -99,11 +108,10 @@ class CartManager
             }
         }
 
-        //Apply BOGO
-
         if(empty($bogo_target)) return;
-
-        foreach ($cart -> get_cart() as $cart_item_key => &$cart_item) {
+        
+        //Third Loop : Apply BOGO
+        foreach ($cart_contents as $cart_item_key => &$cart_item) {
             $line_pid =  $cart_item['data']->is_type('variation') ? $cart_item['data']->get_parent_id() : $cart_item['data']->get_id();
 
             if(!isset($bogo_target[$line_pid])) 
@@ -145,5 +153,21 @@ class CartManager
 
         }
 
+    }
+
+    public function display_bogo_discount_label_on_cart($item_name, $cart_item, $cart_item_key){
+        if (isset($cart_item['wpe_discount_applied']) && $cart_item['wpe_discount_applied']) {
+            $item_name .= '<div class="bogo-applied-label" style="font-size: 0.8em; color: green; margin-top: 5px;">' . __('BOGO Discount Applied!', 'wc-product-enhancer') . '</div>';
+        }
+        return $item_name;
+    }
+
+    public function display_bogo_discount_label_on_checkout($item, $cart_item_key, $values, $order){
+        if (isset($values['wpe_discount_applied']) && $values['wpe_discount_applied']) {
+            $item->add_meta_data(
+                __('BOGO Discount', 'wc-product-enhancer'),
+                __('Applied', 'wc-product-enhancer')
+            );
+        }
     }
 }
