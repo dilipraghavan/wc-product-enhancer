@@ -1,0 +1,20 @@
+{
+  "name": "dilipraghavan/wc-product-enhancer",
+  "description": "A plugin to enhance product display and provide custom pricing rules for WooCommerce.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Dilip Raghavan",
+      "email": "dilip@wpshiftstudio.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.2"
+  },
+  "autoload": {
+    "classmap": [
+      "includes/"
+    ]
+  }
+}

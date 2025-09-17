@@ -10,12 +10,12 @@
      * Text Domain: wc-product-enhancer
      */
 
+    require_once __DIR__ . '/vendor/autoload.php';
     function wc_product_enhancer_load(){
         if(!class_exists('WooCommerce')) 
             return;
 
-        require_once(plugin_dir_path(__FILE__).'includes/class-wc-product-enhancer.php');
-        $wc_product_enhancer = new WCProductEnhancer();
+        $wc_product_enhancer = new \WCProductEnhancer\WCProductEnhancer();
     }
 
     add_action('plugins_loaded','wc_product_enhancer_load');
