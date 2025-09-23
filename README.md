@@ -16,14 +16,35 @@ This plugin allows store owners to create flexible BOGO deals, displaying them d
 
 ---
 
-### 🛠️ Installation
+### 🛠 Installation
 
-1.  Download the plugin files and compress them into a `.zip` archive.
-2.  Navigate to **Plugins** > **Add New** in your WordPress dashboard.
-3.  Click **Upload Plugin**, select the `.zip` file, and click **Install Now**.
-4.  After the installation is complete, click \*\*Activate Plugin`.
+There are two methods for installation depending on whether you are an end-user or a developer.
 
-Alternatively, you can upload the unzipped plugin folder to the `/wp-content/plugins/` directory via FTP.
+### For End-Users (Packaged Plugin)
+
+To install a ready-to-use version of the plugin, download the latest release from the [Releases page](https://github.com/dilipraghavan/wc-product-enhancer/releases). This version is pre-packaged with all dependencies included.
+
+1.  Download the `.zip` file from the latest release.
+2.  In the WordPress dashboard, go to **Plugins > Add New**.
+3.  Click **Upload Plugin**, select the downloaded `.zip` file, and click **Install Now**.
+4.  After installation, click **Activate Plugin**.
+
+### For Developers (with Composer)
+
+This is the recommended method for developers who want to work with the source code or contribute to the plugin.
+
+1.  **Clone the Repository:** Clone the plugin from GitHub to your local machine using Git.
+    ```bash
+    git clone https://github.com/dilipraghavan/wc-product-enhancer.git  wp-content/plugins/wc-product-enhancer
+    ```
+2.  **Install Dependencies:** Navigate into the cloned folder from your command line and run Composer to install the required libraries.
+    ```bash
+    cd wc-product-enhancer
+    composer install
+    ```
+3.  **Create ZIP Archive:** Create a `.zip` archive of the entire `wc-product-enhancer` folder. This zip file now contains all the necessary plugin files, including the `vendor` directory.
+4.  **Upload to WordPress:** In the WordPress dashboard, go to **Plugins > Add New**, click **Upload Plugin**, and select the `.zip` file you just created.
+5.  **Activate Plugin:** After installation, click **Activate Plugin**.
 
 ---
 
